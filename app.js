@@ -21,9 +21,9 @@ function element(tag, className, text) {
 function card(herb) {
   const item = element("li", "card", "")
   item.append(
-    element("h3", "name", herb.name),
-    element("p", "latin", herb.latin),
-    element("p", "use", herb.use),
+    element("h3", "name", herbs.name),
+    element("p", "latin", herbs.latin),
+    element("p", "use", herbs.use),
     element("p", "life", herb.life))
   return item
 }
