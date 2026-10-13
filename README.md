@@ -1,4 +1,9 @@
 # The Little Herb Garden
+   ## Group members
+
+   lijieluo666666-wq 
+   LJY-LIU29
+   Freeze7749
 
 A small website for day 1 of **Frontend Development**.
 
