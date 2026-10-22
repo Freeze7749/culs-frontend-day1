@@ -7,6 +7,11 @@ const list = document.querySelector("#herbs-list")
 const count = document.querySelector(".count")
 const detail = document.querySelector("#herb-detail")
 const detailContent = document.querySelector("#herb-detail-content")
+const search = document.querySelector("#herb-search")
+
+// Each loaded herb with its card, kept so the search can filter without loading anything again.
+// Stays null until the herbs have loaded.
+let herbCards = null
 
 // Thrown when the server cannot be reached at all.
 class NetworkError extends Error {}
@@ -87,17 +92,46 @@ async function show() {
 
   // Show every herb that loaded, even if some of them did not.
   const results = await Promise.allSettled(herbNames.map(loadHerb))
-  const cards = results
-    .map((result, i) => (result.status === "fulfilled" ? card(result.value, herbNames[i]) : null))
-    .filter((item) => item !== null)
-  list.replaceChildren(...cards)
-  count.textContent = `${cards.length} herbs grow here.`
+  herbCards = results
+    .map((result, i) => (result.status === "fulfilled" ? { herb: result.value, item: card(result.value, herbNames[i]) } : null))
+    .filter((entry) => entry !== null)
+  list.replaceChildren(...herbCards.map((entry) => entry.item))
+  filterHerbs() // also applies a search the browser kept from an earlier visit
 
   // If any herb failed because the server was unreachable, say so: reloading may help.
   const errors = results.filter((result) => result.status === "rejected").map((result) => result.reason)
   if (errors.length > 0) {
     const error = errors.find((reason) => reason instanceof NetworkError) ?? errors[0]
     count.after(problem(problemText(error, "some of the herbs")))
+  }
+}
+
+function matches(herb, query) {
+  return [herb.name, herb.latin, herb.use].some((text) => text.toLowerCase().includes(query))
+}
+
+// Shows only the cards that match the search box, and says how many there are.
+function filterHerbs() {
+  if (herbCards === null) {
+    return // still loading; show() calls this again when the herbs are there
+  }
+
+  const query = search.value.trim().toLowerCase()
+  let shown = 0
+  for (const { herb, item } of herbCards) {
+    item.hidden = !matches(herb, query)
+    if (!item.hidden) {
+      shown++
+    }
+  }
+
+  const total = herbCards.length
+  if (query === "") {
+    count.textContent = `${total} herbs grow here.`
+  } else if (shown === 0) {
+    count.textContent = "No herbs match your search."
+  } else {
+    count.textContent = `${shown} of ${total} herbs ${shown === 1 ? "matches" : "match"}`
   }
 }
 
@@ -209,6 +243,7 @@ document.querySelector(".skip-link").addEventListener("click", (event) => {
   document.querySelector("#main").focus()
 })
 
+search.addEventListener("input", filterHerbs)
 window.addEventListener("hashchange", route)
 
 show()
