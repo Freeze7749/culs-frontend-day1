@@ -134,6 +134,13 @@ section {
   font-size: 0.875rem;
 }
 
+.problem {
+  padding: 1rem;
+  border-left: 4px solid #a8432f;
+  border-radius: 0.25rem;
+  background: #fbeee9;
+}
+
 footer {
   padding: 1.5rem;
   border-top: 1px solid var(--line);
