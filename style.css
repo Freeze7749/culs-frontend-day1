@@ -7,6 +7,8 @@
   --paper: #fbfaf5;
   --ink: #1f2420;
   --line: #cfdccb;
+  --focus: #9c4f0c;
+  --focus-on-leaf: #ffd166;
 }
 
 * {
@@ -23,6 +25,23 @@ body {
 
 a {
   color: var(--leaf);
+}
+
+/* A clear ring around whatever has keyboard focus. */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* On the green header a dark ring would disappear, so use a light one. */
+.site-header :focus-visible,
+.skip-link:focus-visible {
+  outline-color: var(--focus-on-leaf);
+}
+
+/* main only gets focus from the skip link; a ring around the whole page would be noise. */
+main:focus {
+  outline: none;
 }
 
 /* Hidden above the page until it gets keyboard focus. */
@@ -79,6 +98,11 @@ main {
 
 section {
   margin-bottom: 2.5rem;
+}
+
+/* Leave room above the herb page so the focus ring on its heading is not cut off. */
+#herb-detail {
+  scroll-margin-top: 1rem;
 }
 
 .intro {

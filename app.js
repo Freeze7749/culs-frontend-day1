@@ -101,9 +101,9 @@ async function show() {
   }
 }
 
-// The part of the address after "#", e.g. "basil" for ".../#basil".
-function hashName() {
-  const raw = location.hash.slice(1)
+// The name in a hash, e.g. "basil" for "#basil".
+function nameFromHash(hash) {
+  const raw = hash.slice(1)
   try {
     return decodeURIComponent(raw)
   } catch {
@@ -111,20 +111,36 @@ function hashName() {
   }
 }
 
-function showList() {
+// The part of the current address after "#".
+function hashName() {
+  return nameFromHash(location.hash)
+}
+
+// `previousName` is what the address showed before, e.g. "basil" when coming back from #basil.
+function showList(previousName) {
   const wasHidden = herbsSection.hidden
   detail.hidden = true
   herbsSection.hidden = false
+  if (!wasHidden) {
+    return
+  }
 
-  // The browser cannot scroll to an anchor while the list is hidden,
-  // so scroll there ourselves once the list is back.
-  const target = document.getElementById(hashName())
-  if (wasHidden && target) {
+  const name = hashName()
+  const target = document.getElementById(name)
+  const herbLink = list.querySelector(`a[href="#${encodeURIComponent(previousName)}"]`)
+
+  if ((name === "" || name === "herbs") && herbLink) {
+    // Back to the list: put focus on the herb the reader just left, so Tab carries on from there.
+    herbLink.focus()
+  } else if (target) {
+    // The browser cannot scroll to an anchor while the list is hidden,
+    // so scroll there ourselves once the list is back.
     target.scrollIntoView()
   }
 }
 
-function showDetail(name, nodes) {
+// `moveFocus` is true when the reader asked for this page, rather than arriving with it in the address.
+function showDetail(name, nodes, moveFocus) {
   if (hashName() !== name) {
     return // the address changed while this herb was loading
   }
@@ -133,6 +149,13 @@ function showDetail(name, nodes) {
   herbsSection.hidden = true
   detail.hidden = false
   detail.scrollIntoView()
+
+  if (moveFocus) {
+    // The link that had focus is now hidden, so move focus to the new heading.
+    const heading = detailContent.querySelector("h2")
+    heading.tabIndex = -1
+    heading.focus({ preventScroll: true })
+  }
 }
 
 function herbDetails(herb) {
@@ -151,25 +174,40 @@ function herbDetails(herb) {
 
 // Decides what to show for the current address.
 // Anchors that already exist on the page (#herbs, #visit, #about…) win over herb names.
-async function route() {
+// `event` is the hashchange event, or undefined when the page first loads.
+async function route(event) {
   const name = hashName()
   const isPageAnchor = document.getElementById(name) !== null
+  const moveFocus = event !== undefined
 
   if (name === "" || isPageAnchor) {
-    showList()
+    showList(event ? nameFromHash(new URL(event.oldURL).hash) : "")
     return
   }
 
   try {
     if (!(await names).includes(name)) {
-      showDetail(name, [problem(`Sorry, we could not find a herb called “${name}”.`)])
+      showDetail(name, [
+        element("h2", "name", "Herb not found"),
+        problem(`Sorry, we could not find a herb called “${name}”.`)
+      ], moveFocus)
       return
     }
-    showDetail(name, herbDetails(await loadHerb(name)))
+    showDetail(name, herbDetails(await loadHerb(name)), moveFocus)
   } catch (error) {
-    showDetail(name, [problem(problemText(error, "the information about this herb"))])
+    showDetail(name, [
+      element("h2", "name", "Could not load this herb"),
+      problem(problemText(error, "the information about this herb"))
+    ], moveFocus)
   }
 }
+
+// The skip link moves focus to the main content without changing the address,
+// so using it on a herb page does not take the reader back to the list.
+document.querySelector(".skip-link").addEventListener("click", (event) => {
+  event.preventDefault()
+  document.querySelector("#main").focus()
+})
 
 window.addEventListener("hashchange", route)
 
