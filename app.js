@@ -84,7 +84,12 @@ async function showDetail(name) {
     element("h2", "name", herb.name),
     element("p", "latin", herb.latin),
     element("p", "use", herb.use),
-    element("p", "life", herb.life)
+    element("p", "life", herb.life),
+    element("p", "description", herb.description),
+    element("h3", "", "Growing"),
+    element("p", "growing", herb.growing),
+    element("h3", "", "Kitchen tip"),
+    element("p", "tip", herb.tip)
   )
   herbsSection.hidden = true
   detail.hidden = false

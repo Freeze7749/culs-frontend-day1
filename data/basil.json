@@ -2,5 +2,8 @@
   "name": "Basil",
   "latin": "Ocimum basilicum",
   "use": "Tomatoes, pesto and anything summery.",
-  "life": "annual"
+  "life": "annual",
+  "description": "A tender annual herb with soft, fragrant leaves and a sweet, peppery taste.",
+  "growing": "Needs warmth, full sun and moist soil, and dies with the first frost. Pinch off the flower buds to keep the leaves coming.",
+  "tip": "Tear the leaves by hand and add them at the end of cooking, so they keep their flavour."
 }

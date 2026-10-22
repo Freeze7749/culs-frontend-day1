@@ -2,5 +2,8 @@
   "name": "Rosemary",
   "latin": "Salvia rosmarinus",
   "use": "Potatoes, bread and roast vegetables.",
-  "life": "perennial"
+  "life": "perennial",
+  "description": "An evergreen shrub with needle-like, resinous leaves and small blue flowers.",
+  "growing": "Loves full sun and well-drained, rather dry soil. Too much water rots its roots.",
+  "tip": "Strip the leaves from the woody stem and chop them finely before adding them to potatoes or bread dough."
 }

@@ -2,5 +2,8 @@
   "name": "Sage",
   "latin": "Salvia officinalis",
   "use": "Butter sauces and tea.",
-  "life": "perennial"
+  "life": "perennial",
+  "description": "A woody perennial with soft, grey-green leaves and an earthy, slightly peppery flavour.",
+  "growing": "Likes full sun and well-drained soil, and needs little water once established.",
+  "tip": "Fry a few leaves in butter until crisp, then spoon the butter over pasta or gnocchi."
 }
