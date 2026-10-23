@@ -216,6 +216,8 @@ function herbDetails(herb) {
     element("h3", "", "Kitchen tip"),
     element("p", "tip", herb.tip)
   ]
+
+    return nodes
 }
 
 // Decides what to show for the current address.
